@@ -11,7 +11,7 @@ import IO
 
 %access public export
 
-infixl 5 >>=
+infixl 5 >>=, >>
 
 interface Applicative m => Monad (m : Type -> Type) where
     ||| Also called `bind`.
@@ -38,6 +38,11 @@ flatten = join
 ||| Consequently, the final value is wrapped in the same `Monad`.
 foldlM : (Foldable t, Monad m) => (funcM: a -> b -> m a) -> (init: a) -> (input: t b) -> m a
 foldlM fm a0 = foldl (\ma,b => ma >>= flip fm b) (pure a0)
+
+||| Similar to `bind`, but drops the value instead of passing it on.
+||| Also called `then`.
+(>>) : Monad m => m a -> m b -> m b
+m >> k = m >>= \_ -> k
 
 -- Annoyingly, these need to be here, so that we can use them in other
 -- Prelude modules other than the top level.
